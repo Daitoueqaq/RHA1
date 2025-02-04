@@ -1,0 +1,20 @@
+
+def calculate_mass_errors(theoretical_mz, observed_mz):
+    error_da = observed_mz - theoretical_mz
+    error_mda = error_da * 1000
+    error_ppm = (error_da / theoretical_mz) * 1e6
+    return error_mda, error_ppm
+
+def main():
+    try:
+        theoretical_mz = float(input("Enter the theoretical m/z value: "))
+        observed_mz = float(input("Enter the observed m/z value: "))
+    except ValueError:
+        print("Invalid input. Please enter numeric values.")
+        return
+    error_mda, error_ppm = calculate_mass_errors(theoretical_mz, observed_mz)
+    print(f"\nAbsolute Mass Error: {error_mda:.3f} mDa")
+    print(f"Relative Mass Error: {error_ppm:.3f} ppm")
+
+if __name__ == "__main__":
+    main()
