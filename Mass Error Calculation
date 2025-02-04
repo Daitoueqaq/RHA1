@@ -1,4 +1,3 @@
-
 def calculate_mass_errors(theoretical_mz, observed_mz):
     error_da = observed_mz - theoretical_mz
     error_mda = error_da * 1000
