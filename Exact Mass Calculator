@@ -1,0 +1,57 @@
+#exact mass calculator
+import re
+import sympy as sp
+
+atomic_mass = {
+    "H": 1.00782503223,
+    "C": 12.0000000,
+    "N": 14.003074, 
+    "O": 15.99491463,
+    "F": 18.99840322,
+    "P": 30.973762,
+    "S": 31.9720707,
+    "Cl": 34.96885272,
+    "Br": 78.9183361,
+    "I": 126.904473,
+    "Na": 22.9897677,
+    "Mg": 23.9850423,
+    "Al": 26.9815386,
+    "Si": 27.9769265,
+}
+
+def calculate_exact_mass(formula: str):
+    elements_counts = []
+    i = 0
+    while i < len(formula):
+        elem = formula[i]
+        if i + 1 < len(formula) and formula[i+1].islower():
+            if i + 2 < len(formula) and not formula[i+2].isdigit() and not formula[i+2].isupper():
+                elem = formula[i]
+            else:
+                elem = formula[i] + formula[i+1]
+                i += 1
+        i += 1
+        
+        count_expr_str = ""
+        while i < len(formula) and not formula[i].isupper():
+            count_expr_str += formula[i]
+            i += 1
+        if count_expr_str == "":  
+            count_expr_str = "1"
+        count_expr_str = re.sub(r'(?<=\d)(?=[A-Za-z])', '*', count_expr_str)
+        count_expr = sp.sympify(count_expr_str)
+        elements_counts.append((elem, count_expr))
+    
+    total_mass = 0
+    for elem, count_expr in elements_counts:
+        if elem not in atomic_mass:
+            raise KeyError(f"Element '{elem}' not in atomic mass dictionary.")
+        mass_value = sp.Float(atomic_mass[elem])
+        total_mass += mass_value * count_expr
+    
+    if total_mass.free_symbols:
+        return sp.simplify(total_mass)
+    else:
+        return float(total_mass)
+
+print(calculate_exact_mass("Cn-3HF2n-7O2"))
