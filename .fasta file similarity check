@@ -1,0 +1,21 @@
+############# .fasta file similarity check #################
+from Bio import SeqIO, pairwise2
+
+def calculate_identity(seq1, seq2):
+    alignment = pairwise2.align.globalxx(seq1, seq2, one_alignment_only=True)[0]
+    aligned_seq1, aligned_seq2, score, start, end = alignment
+    matches = sum(1 for a, b in zip(aligned_seq1, aligned_seq2) if a == b)
+    identity = matches / len(aligned_seq1) * 100
+    return identity
+
+
+fasta_file = "A:/files/RHA1paper/figure/polygen_tree/seqdump_mod.fasta"
+
+sequences = list(SeqIO.parse(fasta_file, "fasta"))
+
+print("Pairs with >= 85% identity:")
+for i, seq1 in enumerate(sequences):
+    for seq2 in sequences[i+1:]:
+        id_percent = calculate_identity(str(seq1.seq), str(seq2.seq))
+        if id_percent >= 85:
+            print(f"{seq1.description} and {seq2.description}: {id_percent:.2f}% identity")
