@@ -1,0 +1,39 @@
+import pandas as pd
+data = {
+    "Compound": [
+        #"1",
+        #"2",
+        #"3",
+        #"4",
+        #"5",
+    ],
+    "Observed_Mass": [
+        #314.00967,
+        #314.00967,
+        #314.00967,
+        #314.00967,
+        #314.00967,
+    ]
+}
+
+df = pd.DataFrame(data)
+
+nominal_cf2 = 50.00000000 
+exact_cf2   = 49.99680632
+
+kendrick_ratio = nominal_cf2 / exact_cf2
+
+def compute_kendrick_metrics(observed_mass, ratio):
+    KM = observed_mass * ratio
+    KMD = KM - round(KM)
+    return KM, KMD
+
+km_values, kmd_values = [], []
+for mass in df["Observed_Mass"]:
+    km, kmd = compute_kendrick_metrics(mass, kendrick_ratio)
+    km_values.append(km)
+    kmd_values.append(kmd)
+
+df["Kendrick_Mass"] = km_values
+df["Kendrick_Mass_Defect"] = kmd_values
+print(df)
